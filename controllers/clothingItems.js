@@ -1,16 +1,15 @@
 const ClothingItem = require("../models/clothingItem");
 
-module.exports.getItem = (req, res) => {
+module.exports.getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.send({ data: items }))
-    .catch((err) =>
-      res.status(500).res.send({ message: "Requested resource not found" })
-    );
+    .catch((err) => res.status(500).send({ message: err.message }));
 };
 
 module.exports.createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   const owner = "507f1f77bcf86cd799439011";
+
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => res.send({ data: item }))
     .catch((err) => res.status(500).send({ message: err.message }));
