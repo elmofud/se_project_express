@@ -1,4 +1,5 @@
 const ClothingItem = require("../models/clothingItem");
+const { findByIdAndUpdate } = require("../models/user");
 
 module.exports.getItems = (req, res) => {
   ClothingItem.find({})
@@ -8,7 +9,7 @@ module.exports.getItems = (req, res) => {
 
 module.exports.createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  const owner = "507f1f77bcf86cd799439011";
+  const owner = req.user._id;
 
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => res.send({ data: item }))
@@ -31,3 +32,11 @@ module.exports.deleteItem = (req, res) => {
 module.exports.createClothingItem = (req, res) => {
   console.log(req.user._id);
 };
+
+// module.exports.disLikeItem = (req, res) => {
+//   ClothingItem.findByIdAndUpdate(
+//     req.params.itemId,
+//     { $pull: { likes: req.user._id } },
+//     { new: true }
+//   );
+// };
