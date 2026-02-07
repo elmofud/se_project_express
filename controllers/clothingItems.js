@@ -27,3 +27,7 @@ module.exports.deleteItem = (req, res) => {
     })
     .catch((err) => res.status(500).send({ message: err.message }));
 };
+// middleware add a user object to each request. take the user id from it inside the card crdation controller
+module.exports.createClothingItem = (req, res) => {
+  console.log(req.user._id);
+};

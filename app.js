@@ -14,6 +14,13 @@ app.use("/items", clothingItemRoutes);
 app.use((reg, res) => {
   res.status(404).send({ message: "Requested resource not found" });
 });
+// create the following middleware
+app.use((req, res, next) => {
+  req.user = {
+    _id: "5d8b8592978f8bd833ca8133",
+  };
+  next();
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
