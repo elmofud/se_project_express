@@ -18,14 +18,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use("/users", userRoutes);
-
-// app.use((req, res) => {
-//   res
-//     .status(ERROR_CODES.NOT_FOUND)
-//     .send({ message: ERROR_MESSAGES.RESOURCE_NOT_FOUND });
-// });
-
 app.use(routes);
 
 app.listen(PORT, () => {

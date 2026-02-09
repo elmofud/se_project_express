@@ -1,10 +1,10 @@
 const router = require("express").Router();
 const userRoutes = require("./users");
 const clothingItemRoutes = require("./clothingItems");
-const { ERROR_CODES, ERROR_MESSAGES } = require("../utils");
+const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 
 router.use("/items", clothingItemRoutes);
-router.use("users", userRoutes);
+router.use("/users", userRoutes);
 
 router.use((req, res) => {
   res
