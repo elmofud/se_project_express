@@ -9,7 +9,7 @@ router.use("users", userRoutes);
 router.use((req, res) => {
   res
     .status(ERROR_CODES.NOT_FOUND)
-    .send({ message: ERROR_MESSAGES.RESSOURCE_NOT_FOUND });
+    .send({ message: ERROR_MESSAGES.RESOURCE_NOT_FOUND });
 });
 
 module.exports = router;

@@ -5,8 +5,4 @@ router.get("/", getUsers);
 router.get("/:userId", getUser);
 router.post("/", createUser);
 
-router.use((reg, res) => {
-  res.status(404).send({ message: "Requested resource not found" });
-});
-
 module.exports = router;
