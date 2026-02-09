@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const userRoutes = require("./routes/users");
 const clothingItemRoutes = require("./routes/clothingItems");
 const { ERROR_CODES, ERROR_MESSAGES } = require("./utils/errors");
+
 const app = express();
 const { PORT = 3001 } = process.env;
 
