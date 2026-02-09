@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/users");
-const clothingItemRoutes = require("./routes/clothingItems");
+const routes = require("./routes/index");
 const { ERROR_CODES, ERROR_MESSAGES } = require("./utils/errors");
 
 const app = express();
@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/items", clothingItemRoutes);
+// app.use("/items", clothingItemRoutes);
 app.use("/users", userRoutes);
 
 app.use((req, res) => {
