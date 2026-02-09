@@ -2,8 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/users");
 const clothingItemRoutes = require("./routes/clothingItems");
-const { PORT = 3001 } = process.env;
+const { ERROR_CODES, ERROR_MESSAGES } = require("./utils/errors");
 const app = express();
+const { PORT = 3001 } = process.env;
 
 mongoose.connect("mongodb://127.0.0.1:27017/wtwr_db");
 
@@ -20,8 +21,10 @@ app.use((req, res, next) => {
 app.use("/items", clothingItemRoutes);
 app.use("/users", userRoutes);
 
-app.use((reg, res) => {
-  res.status(404).send({ message: "Requested resource not found" });
+app.use((req, res) => {
+  res
+    .status(ERROR_CODES.NOT_FOUND)
+    .send({ message: ERROR_MESSAGES.RESOURCE_NOT_FOUND });
 });
 
 app.listen(PORT, () => {

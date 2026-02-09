@@ -9,7 +9,7 @@ const ERROR_MESSAGES = {
   INVALID_ID: "Invalid ID format",
 
   USER_NOT_FOUND: "User not found",
-  ITEM_NOT_FOUND: "Clothing items not found",
+  ITEM_NOT_FOUND: "Clothing item not found",
   RESOURCE_NOT_FOUND: "Requested resource not found",
   SERVER_ERROR: "An error has occurred on the server",
 };
