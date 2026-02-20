@@ -101,5 +101,8 @@ module.exports.login = (req, res) => {
           .status(ERROR_CODES.UNAUTHORIZED)
           .send({ message: ERROR_MESSAGES.UNAUTHORIZED_EMAIL_PASSWORD });
       }
+      return res
+        .status(ERROR_CODES.DEFAULT_ERROR)
+        .send({ message: ERROR_MESSAGES.SERVER_ERROR });
     });
 };
