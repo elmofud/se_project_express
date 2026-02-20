@@ -1,3 +1,6 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../utils/config");
 const User = require("../models/user");
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 
@@ -43,9 +46,12 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, avatar } = req.body;
-
-  User.create({ name, avatar })
+  const { name, avatar, email, password } = req.body;
+  bcrypt
+    .hash(password, 10)
+    .then((hashedPassword) =>
+      User.create({ name, avatar, email, password: hashedPassword })
+    )
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       console.error(err);
@@ -54,8 +60,46 @@ module.exports.createUser = (req, res) => {
           .status(ERROR_CODES.BAD_REQUEST)
           .send({ message: ERROR_MESSAGES.INVALID_DATA });
       }
+      if (err.code === 11000) {
+        return res
+          .status(ERROR_CODES.CONFLICT_DATA)
+          .send({ message: ERROR_MESSAGES.CONFLICTED_DATA });
+      }
       return res
         .status(ERROR_CODES.DEFAULT_ERROR)
         .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email })
+    .select("+password")
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(
+          new Error(ERROR_MESSAGES.UNAUTHORIZED_EMAIL_PASSWORD)
+        );
+      }
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          return Promise.reject(
+            new Error(ERROR_MESSAGES.UNAUTHORIZED_EMAIL_PASSWORD)
+          );
+        }
+        const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+          expiresIn: "7d",
+        });
+        return res.send({ token });
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.message === ERROR_MESSAGES.UNAUTHORIZED_EMAIL_PASSWORD) {
+        return res
+          .status(ERROR_CODES.UNAUTHORIZED)
+          .send({ message: ERROR_MESSAGES.UNAUTHORIZED_EMAIL_PASSWORD });
+      }
     });
 };
