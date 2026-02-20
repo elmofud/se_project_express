@@ -2,6 +2,10 @@ const router = require("express").Router();
 const userRoutes = require("./users");
 const clothingItemRoutes = require("./clothingItems");
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
+const { createUser, login } = require("../controllers/users");
+
+router.post("/signup, createUser");
+router.post("/signin", login);
 
 router.use("/items", clothingItemRoutes);
 router.use("/users", userRoutes);
