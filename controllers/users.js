@@ -15,7 +15,7 @@ module.exports.getUsers = (req, res) => {
     });
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getCurentUser = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
