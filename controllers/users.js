@@ -52,7 +52,10 @@ module.exports.createUser = (req, res) => {
     .then((hashedPassword) =>
       User.create({ name, avatar, email, password: hashedPassword })
     )
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => {
+      const { password: _, ...userWithoutPassword } = user.toObject();
+      res.status(201).send({ data: userWithoutPassword });
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -73,26 +76,12 @@ module.exports.createUser = (req, res) => {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-
-  User.findOne({ email })
-    .select("+password")
+  User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        return Promise.reject(
-          new Error(ERROR_MESSAGES.UNAUTHORIZED_EMAIL_PASSWORD)
-        );
-      }
-      return bcrypt.compare(password, user.password).then((matched) => {
-        if (!matched) {
-          return Promise.reject(
-            new Error(ERROR_MESSAGES.UNAUTHORIZED_EMAIL_PASSWORD)
-          );
-        }
-        const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-          expiresIn: "7d",
-        });
-        return res.send({ token });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
       });
+      return res.send({ token });
     })
     .catch((err) => {
       console.error(err);
