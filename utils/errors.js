@@ -9,6 +9,7 @@ const ERROR_CODES = {
 const ERROR_MESSAGES = {
   INVALID_DATA: "Invalid data provided",
   INVALID_ID: "Invalid ID format",
+  INVALID_TOKEN: "Invalid or expired token",
 
   USER_NOT_FOUND: "User not found",
   ITEM_NOT_FOUND: "Clothing item not found",
@@ -16,6 +17,7 @@ const ERROR_MESSAGES = {
   SERVER_ERROR: "An error has occurred on the server",
   CONFLICTED_DATA: "A user with this email already exists",
   UNAUTHORIZED_EMAIL_PASSWORD: "Incorrect email or password",
+  AUTHORIZATION_REQUIRED: "Authorization required",
 };
 
 module.exports = {
