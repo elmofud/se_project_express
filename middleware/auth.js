@@ -4,6 +4,7 @@ const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
+  console.log("Authorization header:", authorization);
   if (!authorization || !authorization.startsWith("Bearer ")) {
     return res
       .status(ERROR_CODES.UNAUTHORIZED)

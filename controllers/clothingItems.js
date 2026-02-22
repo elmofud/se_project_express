@@ -34,16 +34,26 @@ module.exports.createItem = (req, res) => {
 
 module.exports.deleteItem = (req, res) => {
   const { itemId } = req.params;
+  const { _id } = req.user;
 
-  ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findById(itemId)
     .orFail(() => {
       const error = new Error(ERROR_MESSAGES.ITEM_NOT_FOUND);
       error.statusCode = ERROR_CODES.NOT_FOUND;
       throw error;
     })
     .then((item) => {
-      res.send({ data: item });
+      console.log("item owner:", item.owner.toString());
+      console.log("current user:", _id.toString());
+      if (item.owner.toString() !== _id.toString()) {
+        const error = new Error(ERROR_MESSAGES.FORBIDDEN);
+        error.statusCode = ERROR_CODES.FORBIDDEN;
+        throw error;
+      }
+
+      return ClothingItem.findByIdAndDelete(itemId);
     })
+    .then((item) => res.send({ data: item }))
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
@@ -56,7 +66,14 @@ module.exports.deleteItem = (req, res) => {
           .status(ERROR_CODES.NOT_FOUND)
           .send({ message: ERROR_MESSAGES.ITEM_NOT_FOUND });
       }
+
+      if (err.statusCode === ERROR_CODES.FORBIDDEN) {
+        return res.status(ERROR_CODES.FORBIDDEN).send({
+          message: ERROR_MESSAGES.FORBIDDEN,
+        });
+      }
       return res
+
         .status(ERROR_CODES.DEFAULT_ERROR)
         .send({ message: ERROR_MESSAGES.SERVER_ERROR });
     });
