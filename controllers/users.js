@@ -53,8 +53,9 @@ module.exports.createUser = (req, res) => {
       User.create({ name, avatar, email, password: hashedPassword })
     )
     .then((user) => {
-      const { password: _, ...userWithoutPassword } = user.toObject();
-      res.status(201).send({ data: userWithoutPassword });
+      const userObject = user.toObject();
+      delete userObject.password;
+      res.status(201).send({ data: userObject });
     })
     .catch((err) => {
       console.error(err);
