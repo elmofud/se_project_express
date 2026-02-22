@@ -15,10 +15,10 @@ module.exports.getUsers = (req, res) => {
     });
 };
 
-module.exports.getCurentUser = (req, res) => {
-  const { userId } = req.params;
+module.exports.getCurrentUser = (req, res) => {
+  const { _id } = req.user;
 
-  User.findById(userId)
+  User.findById(_id)
     .orFail(() => {
       const error = new Error(ERROR_MESSAGES.USER_NOT_FOUND);
       error.statusCode = ERROR_CODES.NOT_FOUND;
@@ -90,6 +90,7 @@ module.exports.login = (req, res) => {
           .status(ERROR_CODES.UNAUTHORIZED)
           .send({ message: ERROR_MESSAGES.UNAUTHORIZED_EMAIL_PASSWORD });
       }
+
       return res
         .status(ERROR_CODES.DEFAULT_ERROR)
         .send({ message: ERROR_MESSAGES.SERVER_ERROR });
