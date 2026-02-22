@@ -13,7 +13,6 @@ module.exports.getItems = (req, res) => {
 };
 
 module.exports.createItem = (req, res) => {
-  console.log(req.user._id);
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
@@ -43,8 +42,6 @@ module.exports.deleteItem = (req, res) => {
       throw error;
     })
     .then((item) => {
-      console.log("item owner:", item.owner.toString());
-      console.log("current user:", _id.toString());
       if (item.owner.toString() !== _id.toString()) {
         const error = new Error(ERROR_MESSAGES.FORBIDDEN);
         error.statusCode = ERROR_CODES.FORBIDDEN;
