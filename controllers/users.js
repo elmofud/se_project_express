@@ -96,3 +96,38 @@ module.exports.login = (req, res) => {
         .send({ message: ERROR_MESSAGES.SERVER_ERROR });
     });
 };
+
+module.exports.updateUser = (req, res) => {
+  const { name, avatar } = req.body;
+  const { _id } = req.user;
+  User.findByIdAndUpdate(
+    _id,
+    { name, avatar },
+    {
+      new: true,
+      runValidators: true,
+    }
+  )
+    .orFail(() => {
+      const error = new Error(ERROR_MESSAGES.USER_NOT_FOUND);
+      error.statusCode = ERROR_CODES.NOT_FOUND;
+      throw error;
+    })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "ValidationError") {
+        return res
+          .status(ERROR_CODES.BAD_REQUEST)
+          .send({ message: ERROR_MESSAGES.INVALID_DATA });
+      }
+      if (err.statusCode === ERROR_CODES.NOT_FOUND) {
+        return res
+          .status(ERROR_CODES.NOT_FOUND)
+          .send({ message: ERROR_MESSAGES.USER_NOT_FOUND });
+      }
+      return res
+        .status(ERROR_CODES.DEFAULT_ERROR)
+        .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+    });
+};
