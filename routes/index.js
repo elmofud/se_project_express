@@ -4,9 +4,11 @@ const clothingItemRoutes = require("./clothingItems");
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 const { createUser, login } = require("../controllers/users");
 const auth = require("../middlewares/auth");
+const { getItems } = require("../controllers/clothingItems");
 
 router.post("/signup", createUser);
 router.post("/signin", login);
+router.get("/items", getItems);
 
 router.use(auth);
 
