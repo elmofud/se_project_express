@@ -2,7 +2,7 @@
 
 ## Project Description
 
-WTWR is a backend application that provides API endpoints for managing users and clothing items. The application allows users to create, view, and manage a collection of clothing items, with the ability to like/unlike items. This backend is designed to work with a frontend application that helps users decide what to wear based on weather conditions.
+WTWR is a backend application that provides API endpoints for managing users and clothing items. The application allows users to create, view, and manage a collection of clothing items, with the ability to like/unlike items. This backend is designed to work with a frontend application that helps users decide what to wear based on weather conditions. The backend also provides authentication using JWT token creation and verification while using bcrypt for password hashing.
 
 ## Running the Project
 
@@ -18,6 +18,10 @@ WTWR is a backend application that provides API endpoints for managing users and
 - **Express.js** - Web application framework for Node.js, used to build RESTful API endpoints
 - **MongoDB** - NoSQL database for storing user and clothing item data
 - **Mongoose** - ODM (Object Data Modeling) library for MongoDB, providing schema validation and data modeling
+- **bcryptjs** - Library for hashing and comparing passwords securely
+- **jsonwebtoken** - Library for creating and verifying JWT tokens for authentication
+- **validator** - Library for validating email addresses and URLs
+- **cors** - Middleware for enabling cross-origin resource sharing
 
 ### Development Tools
 
@@ -29,22 +33,34 @@ WTWR is a backend application that provides API endpoints for managing users and
 
 ### User Management
 
-- Create new users with name and avatar
+- Create new users with name and avatar, email and hashed password
+- User login returning a JWT token
 - Retrieve all users
-- Retrieve individual user by ID
+- Retrieve current logged-in user profile
+- Update current user profile
+
+### Authentication
+
+- User signup with bcrypt password hashing
+- User login with JWT token creation
+- Protected routes requiring a valid token
+- Users can only delete their own clothing items
 
 ### Clothing Item Management
 
 - Create new clothing items with name, weather type, and image URL
 - Retrieve all clothing items
-- Delete clothing items
+- Delete clothing items (owner only)
 - Like/unlike clothing items
 
 ### Error Handling
 
 - Comprehensive error handling with appropriate HTTP status codes:
   - **400** - Bad Request (invalid data or invalid ID format)
+  - **401** - Unauthorized (invalid token or incorrect credentials)
+  - **403** - Forbidden (attempting to delete another user's item)
   - **404** - Not Found (resource doesn't exist)
+  - **409** - Conflict (duplicate email on signup)
   - **500** - Internal Server Error (server-side errors)
 - Centralized error constants for consistency
 - Detailed error messages for better debugging
@@ -52,6 +68,7 @@ WTWR is a backend application that provides API endpoints for managing users and
 ### Data Validation
 
 - Schema validation using Mongoose
+- Email validation using validator package
 - URL validation for avatar and image URLs
 - String length validation for names
 - Enum validation for weather types (hot, warm, cold)
@@ -61,7 +78,8 @@ WTWR is a backend application that provides API endpoints for managing users and
 ### Middleware
 
 - **JSON Parser** - `express.json()` middleware to parse incoming JSON request bodies
-- **Temporary Authorization** - Hardcoded user authentication middleware (to be replaced with JWT in future sprints)
+- **Auth Middleware** - JWT verification middleware that protects routes
+- **CORS** - Configured to allow cross-origin requests
 - **404 Handler** - Catches requests to non-existent routes
 
 ### Mongoose Methods
@@ -70,7 +88,7 @@ WTWR is a backend application that provides API endpoints for managing users and
 - **`.findById()`** - Retrieve a single document by ID
 - **`.create()`** - Create new documents
 - **`.findByIdAndDelete()`** - Find and delete a document by ID
-- **`.findByIdAndUpdate()`** - Find and update a document by ID
+- **`.findByIdAndUpdate()`** - Find and Update a document by ID
 - **`.orFail()`** - Helper method to throw an error when a document is not found
 
 ### MongoDB Operators
@@ -105,19 +123,24 @@ wtwr-backend/
 
 ## API Endpoints
 
-### Users
+### Authentication (public)
+
+- **POST** `/signup` - Create a new user account
+- **POST** `/signin` - Login and receive a JWT token
+
+### Users (Protected)
 
 - **GET** `/users` - Get all users
-- **GET** `/users/:userId` - Get user by ID
-- **POST** `/users` - Create a new user
+- **GET** `/users/me` - Get current logged-in user
+- **PATCH** `/users/me` - Update current user profile
 
 ### Clothing Items
 
-- **GET** `/items` - Get all clothing items
-- **POST** `/items` - Create a new clothing item
-- **DELETE** `/items/:itemId` - Delete a clothing item
-- **PUT** `/items/:itemId/likes` - Like a clothing item
-- **DELETE** `/items/:itemId/likes` - Unlike a clothing item
+- **GET** `/items` - Get all clothing items (public)
+- **POST** `/items` - Create a new clothing item (protected)
+- **DELETE** `/items/:itemId` - Delete a clothing item (owner only)
+- **PUT** `/items/:itemId/likes` - Like a clothing item (protected)
+- **DELETE** `/items/:itemId/likes` - Unlike a clothing item (protected)
 
 ## Installation and Setup
 
@@ -147,30 +170,7 @@ npm install
 mongod
 ```
 
-4. Create a test user using Postman:
-
-- Send a POST request to `http://localhost:3001/users`
-- Request body:
-
-```json
-{
-  "name": "Your Name",
-  "avatar": "https://example.com/avatar.jpg"
-}
-```
-
-5. Copy the user's `_id` from the response and update `app.js`:
-
-```javascript
-app.use((req, res, next) => {
-  req.user = {
-    _id: "PASTE_YOUR_USER_ID_HERE",
-  };
-  next();
-});
-```
-
-6. Start the development server:
+4. Start the development server:
 
 ```bash
 npm run dev
@@ -182,23 +182,21 @@ The server will run on `http://localhost:3001`
 
 ### Production Dependencies
 
-- **express** - ^4.18.2 - Web framework
-- **mongoose** - ^7.0.0 - MongoDB ODM
+- **express** - ^4.22.1 - Web framework
+- **mongoose** - ^8.22.1 - MongoDB ODM
+- **bcryptjs** - ^3.0.3 - Password hashing
+- **jsonwebtoken** - ^9.0.3 - JWT authentication
+- **validator** - ^13.15.26 - Data validation
+- **CORS** - ^2.8.6 - Cross-origin resource sharing
 
 ### Development Dependencies
 
-- **nodemon** - ^2.0.20 - Auto-restart development server
-- **eslint** - ^8.0.0 - Code linting
-
-## Future Enhancements
-
-- Implement JWT-based authentication to replace temporary authorization middleware
-- Add user login and signup endpoints
-- Implement proper authorization checks (users can only delete their own items)
-- Add pagination for GET requests
-- Implement image upload functionality
-- Add filtering and sorting options for clothing items
-- Create comprehensive API documentation with Swagger
+- **nodemon** - ^3.1.11 - Auto-restart development server
+- **eslint** - ^8.57.1 - Code linting
+- **eslint-plugin-import** - ^2.32.0 - ESLint import rules
+- **eslint-config-airbnb-base** - ^15.0.0 - Airbnb ESLint rules
+- **eslint-config-prettier** - ^8.10.2 - Prettier ESLint integration
+- **prettier** - ^2.8.8 - Code formatting
 
 ## Learning Outcomes
 
@@ -219,4 +217,4 @@ Developed as part of the TripleTen Software Engineering Bootcamp
 
 ### Testing
 
-Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 12
+Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 13
