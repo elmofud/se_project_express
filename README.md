@@ -104,7 +104,7 @@ WTWR is a backend application that provides API endpoints for managing users and
 
 ## Project Structure
 
-```
+````
 wtwr-backend/
 ├── models/
 │   ├── user.js              # User schema and model
@@ -115,11 +115,13 @@ wtwr-backend/
 ├── routes/
 │   ├── users.js             # User route definitions
 │   └── clothingItems.js     # Clothing item route definitions
+|   |__ index.js
 ├── utils/
+|   |__ config.js
 │   └── errors.js            # Centralized error codes and messages
 ├── app.js                   # Main application entry point
 └── package.json             # Project dependencies and scripts
-```
+
 
 ## API Endpoints
 
@@ -156,7 +158,7 @@ wtwr-backend/
 ```bash
 git clone <repository-url>
 cd wtwr-backend
-```
+````
 
 2. Install dependencies:
 
@@ -209,6 +211,32 @@ This project demonstrates proficiency in:
 - Middleware implementation
 - Code organization and best practices
 - Version control with Git
+
+## Screenshots
+
+### Signup
+
+![Signup](./screenShots/signup.png)
+
+### Login
+
+![Login](./screenShots/login.png)
+
+### Protected Route
+
+![Protected Rout](./screenShots/protection.png)
+
+### Unauthorized Request
+
+![Unauthorized Request](./screenShots/unauthorized.png)
+
+### Forbidden Request
+
+![Forbidden](./screenShots/forbidden.png)
+
+### Duplicate Email
+
+![Duplicate Email](./screenShots/duplicate-email.png)
 
 ## Author
 

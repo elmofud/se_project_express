@@ -3,18 +3,22 @@ const userRoutes = require("./users");
 const clothingItemRoutes = require("./clothingItems");
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 const { createUser, login } = require("../controllers/users");
-const auth = require("../middlewares/auth");
 const { getItems } = require("../controllers/clothingItems");
+const auth = require("../middlewares/auth");
 
+// ── PUBLIC ROUTES ────────────────────────────────────────────────
 router.post("/signup", createUser);
 router.post("/signin", login);
 router.get("/items", getItems);
 
+// ── BOUNCER ──────────────────────────────────────────────────────
 router.use(auth);
 
+// ── PROTECTED ROUTES ─────────────────────────────────────────────
 router.use("/items", clothingItemRoutes);
 router.use("/users", userRoutes);
 
+// ── 404 FALLBACK ─────────────────────────────────────────────────
 router.use((req, res) => {
   res
     .status(ERROR_CODES.NOT_FOUND)
