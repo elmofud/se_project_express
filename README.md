@@ -228,6 +228,7 @@ This project demonstrates proficiency in:
 
 ### Protected Route
 
+npm
 ![Protected Rout](./screenShots/protection.png)
 
 ### Unauthorized Request
@@ -241,6 +242,10 @@ This project demonstrates proficiency in:
 ### Duplicate Email
 
 ![Duplicate Email](./screenShots/duplicate-email.png)
+
+## Project Pitch Video
+
+Check out [this video](https://drive.google.com/file/d/1zBuvhysawzFfS6Lno35hlVF1ScpCyoyp/view?usp=sharing), where I describe my project and some challenges I faced while building it.
 
 ## Author
 
