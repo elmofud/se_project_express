@@ -32,10 +32,10 @@ module.exports.createItem = (req, res) => {
 };
 
 module.exports.deleteItem = (req, res) => {
-  const { itemId } = req.params;
+  const { id } = req.params;
   const { _id } = req.user;
 
-  ClothingItem.findById(itemId)
+  ClothingItem.findById(id)
     .orFail(() => {
       const error = new Error(ERROR_MESSAGES.ITEM_NOT_FOUND);
       error.statusCode = ERROR_CODES.NOT_FOUND;
@@ -48,7 +48,7 @@ module.exports.deleteItem = (req, res) => {
         throw error;
       }
 
-      return ClothingItem.findByIdAndDelete(itemId);
+      return ClothingItem.findByIdAndDelete(id);
     })
     .then((item) => res.send({ data: item }))
     .catch((err) => {
@@ -70,7 +70,6 @@ module.exports.deleteItem = (req, res) => {
         });
       }
       return res
-
         .status(ERROR_CODES.DEFAULT_ERROR)
         .send({ message: ERROR_MESSAGES.SERVER_ERROR });
     });
@@ -78,7 +77,7 @@ module.exports.deleteItem = (req, res) => {
 
 module.exports.likeItem = (req, res) => {
   ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
+    req.params.id,
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
@@ -110,7 +109,7 @@ module.exports.likeItem = (req, res) => {
 
 module.exports.dislikeItem = (req, res) => {
   ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
+    req.params.id,
     { $pull: { likes: req.user._id } },
     { new: true }
   )
