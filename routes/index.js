@@ -8,11 +8,9 @@ const auth = require("../middlewares/auth");
 
 router.post("/signup", createUser);
 router.post("/signin", login);
-router.get("/items", getItems);
-
-router.use(auth);
 
 router.use("/items", clothingItemRoutes);
+router.use(auth);
 router.use("/users", userRoutes);
 
 router.use((req, res) => {

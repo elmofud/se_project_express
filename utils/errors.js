@@ -21,6 +21,7 @@ const ERROR_MESSAGES = {
   FORBIDDEN: "You are not authorized to delete this item",
   AUTHORIZATION_REQUIRED: "Authorization required",
   PASSWORD_REQUIRED_STRING: "Password is required and must be a string",
+  PASSWORD_TO_SHORT: "password must be at least 8 characters",
 };
 
 module.exports = {

@@ -36,6 +36,11 @@ module.exports.getCurrentUser = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
+  if (password.length < 8) {
+    return res
+      .status(ERROR_CODES.BAD_REQUEST)
+      .send({ message: ERROR_MESSAGES.PASSWORD_TO_SHORT });
+  }
   if (!password || typeof password !== "string") {
     return res
       .status(ERROR_CODES.BAD_REQUEST)
