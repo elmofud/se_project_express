@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(value) {
-        return validator.isURL(value);
+        return validator.isURL(value, { require_tld: false });
       },
       message: "You must enter a valid URL",
     },
