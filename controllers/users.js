@@ -4,17 +4,6 @@ const { JWT_SECRET } = require("../utils/config");
 const User = require("../models/user");
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 
-module.exports.getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(ERROR_CODES.DEFAULT_ERROR)
-        .send({ message: ERROR_MESSAGES.SERVER_ERROR });
-    });
-};
-
 module.exports.getCurrentUser = (req, res) => {
   const { _id } = req.user;
 
@@ -47,6 +36,11 @@ module.exports.getCurrentUser = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
+  if (!password || typeof password !== "string") {
+    return res
+      .status(ERROR_CODES.BAD_REQUEST)
+      .json({ message: ERROR_MESSAGES.PASSWORD_REQUIRED_STRING });
+  }
   bcrypt
     .hash(password, 10)
     .then((hashedPassword) =>

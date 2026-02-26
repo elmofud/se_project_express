@@ -20,6 +20,7 @@ const ERROR_MESSAGES = {
   UNAUTHORIZED_EMAIL_PASSWORD: "Incorrect email or password",
   FORBIDDEN: "You are not authorized to delete this item",
   AUTHORIZATION_REQUIRED: "Authorization required",
+  PASSWORD_REQUIRED_STRING: "Password is required and must be a string",
 };
 
 module.exports = {
