@@ -14,7 +14,7 @@ module.exports.getCurrentUser = (req, res) => {
       throw error;
     })
     .then((user) => {
-      return res.send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       console.error(err);
@@ -41,7 +41,7 @@ module.exports.createUser = (req, res) => {
       .status(ERROR_CODES.BAD_REQUEST)
       .json({ message: ERROR_MESSAGES.PASSWORD_REQUIRED_STRING });
   }
-  bcrypt
+  return bcrypt
     .hash(password, 10)
     .then((hashedPassword) =>
       User.create({ name, avatar, email, password: hashedPassword })
