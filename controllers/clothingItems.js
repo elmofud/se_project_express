@@ -1,77 +1,52 @@
 const ClothingItem = require("../models/clothingItem");
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
+const BadRequestError = require("../errors/BadRequestError");
+const NotFoundError = require("../errors/NotFoundError");
+const ForbiddenError = require("../errors/ForbiddenError");
 
-module.exports.getItems = (req, res) => {
+module.exports.getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.send({ data: items }))
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(ERROR_CODES.DEFAULT_ERROR)
-        .send({ message: ERROR_MESSAGES.SERVER_ERROR });
-    });
+    .catch(next);
 };
 
-module.exports.createItem = (req, res) => {
+module.exports.createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => res.status(201).send({ data: item }))
     .catch((err) => {
-      console.error(err);
       if (err.name === "ValidationError") {
-        return res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_MESSAGES.INVALID_DATA });
+        next(new BadRequestError(ERROR_MESSAGES.INVALID_DATA));
+      } else {
+        next(err);
       }
-      return res
-        .status(ERROR_CODES.DEFAULT_ERROR)
-        .send({ message: ERROR_MESSAGES.SERVER_ERROR });
     });
 };
 
-module.exports.deleteItem = (req, res) => {
+module.exports.deleteItem = (req, res, next) => {
   const { id } = req.params;
   const { _id } = req.user;
 
   ClothingItem.findById(id)
     .orFail(() => {
-      const error = new Error(ERROR_MESSAGES.ITEM_NOT_FOUND);
-      error.statusCode = ERROR_CODES.NOT_FOUND;
-      throw error;
+      throw new NotFoundError(ERROR_MESSAGES.ITEM_NOT_FOUND);
     })
     .then((item) => {
       if (item.owner.toString() !== _id.toString()) {
-        const error = new Error(ERROR_MESSAGES.FORBIDDEN);
-        error.statusCode = ERROR_CODES.FORBIDDEN;
-        throw error;
+        throw new ForbiddenError(ERROR_MESSAGES.FORBIDDEN);
       }
 
       return ClothingItem.findByIdAndDelete(id);
     })
     .then((item) => res.send({ data: item }))
     .catch((err) => {
-      console.error(err);
       if (err.name === "CastError") {
-        return res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_MESSAGES.INVALID_ID });
+        next(new BadRequestError(ERROR_MESSAGES.INVALID_ID));
+      } else {
+        next(err);
       }
-      if (err.statusCode === ERROR_CODES.NOT_FOUND) {
-        return res
-          .status(ERROR_CODES.NOT_FOUND)
-          .send({ message: ERROR_MESSAGES.ITEM_NOT_FOUND });
-      }
-
-      if (err.statusCode === ERROR_CODES.FORBIDDEN) {
-        return res.status(ERROR_CODES.FORBIDDEN).send({
-          message: ERROR_MESSAGES.FORBIDDEN,
-        });
-      }
-      return res
-        .status(ERROR_CODES.DEFAULT_ERROR)
-        .send({ message: ERROR_MESSAGES.SERVER_ERROR });
     });
 };
 
