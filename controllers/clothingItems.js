@@ -64,7 +64,7 @@ module.exports.likeItem = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        next(new BadRequestError(ERROR_CODES.BAD_REQUEST));
+        next(new BadRequestError(ERROR_MESSAGES.BAD_REQUEST));
       } else {
         next(err);
       }
@@ -85,7 +85,7 @@ module.exports.dislikeItem = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        next(new BadRequestError(ERROR_CODES.BAD_REQUEST));
+        next(new BadRequestError(ERROR_MESSAGES.BAD_REQUEST));
       } else {
         next(err);
       }
