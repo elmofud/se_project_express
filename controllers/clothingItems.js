@@ -1,5 +1,5 @@
 const ClothingItem = require("../models/clothingItem");
-const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
+const { ERROR_MESSAGES } = require("../utils/errors");
 const BadRequestError = require("../errors/BadRequestError");
 const NotFoundError = require("../errors/NotFoundError");
 const ForbiddenError = require("../errors/ForbiddenError");
@@ -50,48 +50,35 @@ module.exports.deleteItem = (req, res, next) => {
     });
 };
 
-module.exports.likeItem = (req, res) => {
+module.exports.likeItem = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
     req.params.id,
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
     .orFail(() => {
-      const error = new Error(ERROR_MESSAGES.ITEM_NOT_FOUND);
-      error.statusCode = ERROR_CODES.NOT_FOUND;
-      throw error;
+      throw new NotFoundError(ERROR_MESSAGES.ITEM_NOT_FOUND);
     })
     .then((item) => {
       res.send({ data: item });
     })
     .catch((err) => {
-      console.error(err);
       if (err.name === "CastError") {
-        return res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_MESSAGES.INVALID_ID });
+        next(new BadRequestError(ERROR_CODES.BAD_REQUEST));
+      } else {
+        next(err);
       }
-      if (err.statusCode === ERROR_CODES.NOT_FOUND) {
-        return res
-          .status(ERROR_CODES.NOT_FOUND)
-          .send({ message: ERROR_MESSAGES.ITEM_NOT_FOUND });
-      }
-      return res
-        .status(ERROR_CODES.DEFAULT_ERROR)
-        .send({ message: ERROR_MESSAGES.SERVER_ERROR });
     });
 };
 
-module.exports.dislikeItem = (req, res) => {
+module.exports.dislikeItem = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
     req.params.id,
     { $pull: { likes: req.user._id } },
     { new: true }
   )
     .orFail(() => {
-      const error = new Error(ERROR_MESSAGES.ITEM_NOT_FOUND);
-      error.statusCode = ERROR_CODES.NOT_FOUND;
-      throw error;
+      throw new NotFoundError(ERROR_MESSAGES.ITEM_NOT_FOUND);
     })
     .then((item) => {
       res.send({ data: item });
@@ -99,17 +86,9 @@ module.exports.dislikeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        return res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_MESSAGES.INVALID_ID });
+          next(new BadRequestError(ERROR_CODES.BAD_REQUEST)
+      } else {
+        next(err);
       }
-      if (err.statusCode === ERROR_CODES.NOT_FOUND) {
-        return res
-          .status(ERROR_CODES.NOT_FOUND)
-          .send({ message: ERROR_MESSAGES.ITEM_NOT_FOUND });
-      }
-      return res
-        .status(ERROR_CODES.DEFAULT_ERROR)
-        .send({ message: ERROR_MESSAGES.SERVER_ERROR });
     });
 };
