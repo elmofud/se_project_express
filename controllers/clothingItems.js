@@ -84,9 +84,8 @@ module.exports.dislikeItem = (req, res, next) => {
       res.send({ data: item });
     })
     .catch((err) => {
-      console.error(err);
       if (err.name === "CastError") {
-          next(new BadRequestError(ERROR_CODES.BAD_REQUEST)
+        next(new BadRequestError(ERROR_CODES.BAD_REQUEST));
       } else {
         next(err);
       }
