@@ -27,5 +27,6 @@ module.exports = {
         allow: ["_id", "__typename", "my_variable"],
       },
     ],
+    "no-unused-vars": ["error", { argsIgnorePattern: "next" }],
   },
 };
