@@ -6,7 +6,7 @@ const { ERROR_MESSAGES } = require("../utils/errors");
 const NotFoundError = require("../errors/NotFoundError");
 const BadRequestError = require("../errors/BadRequestError");
 const ConflictError = require("../errors/ConflictError");
-const UnauthorizedError = require("../errors/unauthorizedError");
+const UnauthorizedError = require("../errors/UnauthorizedError");
 
 module.exports.getCurrentUser = (req, res, next) => {
   const { _id } = req.user;
