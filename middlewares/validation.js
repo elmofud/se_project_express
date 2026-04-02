@@ -2,6 +2,7 @@ const { Joi, celebrate } = require("celebrate");
 const validator = require("validator");
 
 const validateURL = (value, helpers) => {
+  if (value === "") return value;
   if (validator.isURL(value)) {
     return value;
   }
@@ -66,7 +67,7 @@ module.exports.validateLogin = celebrate({
 
 module.exports.validateUserUpdate = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).messages({
+    name: Joi.string().required().min(2).max(30).messages({
       "string.min": 'The minimum length of the "name" field is 2',
       "string.max": 'The maximum length of the "name" field is 30',
       "string.empty": 'The "name" field must be filled in',

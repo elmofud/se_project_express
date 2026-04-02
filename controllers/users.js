@@ -29,13 +29,6 @@ module.exports.getCurrentUser = (req, res, next) => {
 
 module.exports.createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
-  if (!password || typeof password !== "string") {
-    return next(new BadRequestError(ERROR_MESSAGES.PASSWORD_REQUIRED_STRING));
-  }
-  if (password.length < 8) {
-    return next(new BadRequestError(ERROR_MESSAGES.PASSWORD_TO_SHORT));
-  }
-
   return bcrypt
     .hash(password, 10)
     .then((hashedPassword) =>
